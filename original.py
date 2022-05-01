@@ -3,9 +3,6 @@ from curses import wrapper
 import queue
 import time
 
-
-
-
 maze = [
     ["#", "O", "#", "#", "#", "#", "#", "#", "#"],
     ["#", " ", " ", " ", " ", " ", " ", " ", "#"],
@@ -17,6 +14,7 @@ maze = [
     ["#", " ", " ", " ", " ", " ", " ", " ", "#"],
     ["#", "#", "#", "#", "#", "#", "#", "X", "#"]
 ]
+
 
 def print_maze(maze, stdscr, path=[]):
     BLUE = curses.color_pair(1)
@@ -44,10 +42,9 @@ def find_path(maze, stdscr):
     end = "X"
     start_pos = find_start(maze, start)
 
-    # put 2 values one for path and one for current position
     q = queue.Queue()
     q.put((start_pos, [start_pos]))
-    
+
     visited = set()
 
     while not q.empty():
@@ -55,38 +52,38 @@ def find_path(maze, stdscr):
         row, col = current_pos
 
         stdscr.clear()
-        print_maze(maze, stdscr, path) 
+        print_maze(maze, stdscr, path)
+        time.sleep(0.2)
         stdscr.refresh()
 
-        # return path if you find the end
         if maze[row][col] == end:
             return path
 
         neighbors = find_neighbors(maze, row, col)
         for neighbor in neighbors:
-            # Check for obstacles and already visited nodes
             if neighbor in visited:
                 continue
 
             r, c = neighbor
             if maze[r][c] == "#":
                 continue
-            
+
             new_path = path + [neighbor]
             q.put((neighbor, new_path))
             visited.add(neighbor)
 
+
 def find_neighbors(maze, row, col):
     neighbors = []
 
-    if row > 0: # UP
+    if row > 0:  # UP
         neighbors.append((row - 1, col))
-    if row + 1 < len(maze): # DOWN
+    if row + 1 < len(maze):  # DOWN
         neighbors.append((row + 1, col))
-    if col > 0: # LEFT
+    if col > 0:  # LEFT
         neighbors.append((row, col - 1))
-    if col + 1 < len(maze[0]): # RIGHT
-        neighbors.append((row , col + 1))
+    if col + 1 < len(maze[0]):  # RIGHT
+        neighbors.append((row, col + 1))
 
     return neighbors
 
@@ -94,13 +91,9 @@ def find_neighbors(maze, row, col):
 def main(stdscr):
     curses.init_pair(1, curses.COLOR_BLUE, curses.COLOR_BLACK)
     curses.init_pair(2, curses.COLOR_RED, curses.COLOR_BLACK)
-    blue_and_black = curses.color_pair(1)
-    
 
-    stdscr.clear()
-    print_maze(maze, stdscr) 
-    stdscr.refresh()
     find_path(maze, stdscr)
     stdscr.getch()
+
 
 wrapper(main)
