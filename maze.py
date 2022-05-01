@@ -56,6 +56,7 @@ def find_path(maze, stdscr):
 
         stdscr.clear()
         print_maze(maze, stdscr, path) 
+        time.sleep(0.2)
         stdscr.refresh()
 
         # return path if you find the end
