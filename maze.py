@@ -24,8 +24,48 @@ def print_maze(maze, stdscr, path=[]):
 
     for i, row in enumerate(maze):
         for j, value in enumerate(row):
-            stdscr.addstr(i, j, value)
+            stdscr.addstr(i, j*2, value, BLUE)
+
+def find_start(maze, start):
+    for i, row in enumerate(maze):
+        for j, value in enumerate(row):
+            if value == start:
+                return i, j
+
+    return None
+
+
+def find_path(maze, stdscr):
+    start = "O"
+    end = "X"
+    start_pos = find_start(maze, start)
+
+    # put 2 values one for path and one for current position
+    q = queue.Queue()
+    q.put((start_pos, [start_pos]))
     
+    visited = set()
+
+    while not q.empty():
+        current_pos, path = q.get()
+        row, col = current_pos
+
+        # return path if you find the end
+        if maze[row][col] == end:
+            return path
+
+def find_neighbors(maze, row, col):
+    neighbors = []
+
+    if row > 0: # UP
+        neighbors.append((row - 1, col))
+    if row + 1 < len(maze): # DOWN
+        neighbors.append((row + 1, col))
+    if col > 0: # LEFT
+        neighbors.append((row, col - 1))
+    if col + 1 < len(maze[0]): # RIGHT
+        neighbors.append((row , col + 1))
+
 
 def main(stdscr):
     curses.init_pair(1, curses.COLOR_BLUE, curses.COLOR_BLACK)
